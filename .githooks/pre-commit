@@ -1,0 +1,30 @@
+#!/bin/sh
+
+echo "🧹 Formatting Go code..."
+# Run go fmt using a lightweight standard Go image
+docker run --rm -v "$(pwd):/app" -w /app golang:1.26-alpine go fmt ./...
+
+# Re-stage any Go files that were modified by the formatter
+# This ensures the formatted code actually makes it into the commit
+STAGED_GO_FILES=$(git diff --cached --name-only | grep '\.go$')
+if [ -n "$STAGED_GO_FILES" ]; then
+  echo "$STAGED_GO_FILES" | xargs git add
+fi
+
+echo "🕵️  Running golangci-lint via Docker..."
+# Run the linter using the one-off Docker container
+docker run --rm -v "$(pwd):/app" -w /app golangci/golangci-lint:v2.11.4 golangci-lint run
+
+# Capture the exit code of the Docker command
+status=$?
+
+# If the exit code is not 0, the linter failed
+if [ $status -ne 0 ]; then
+  echo ""
+  echo "❌ Linting failed! Please fix the errors above and try committing again."
+  echo "   (To skip this check in an emergency, use: git commit --no-verify)"
+  exit 1
+fi
+
+echo "✅ Linting passed!"
+exit 0
