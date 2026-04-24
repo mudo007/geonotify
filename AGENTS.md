@@ -6,7 +6,7 @@ trunk-based CI/CD. Built as a deliberate AI-assisted development showcase.
 
 ## Quick orientation
 
-- Language: Go 1.23+
+- Language: Go 1.26
 - Architecture: Hexagonal (ports & adapters) with DDD vocabulary
 - Event backbone: Apache Kafka 3.x (KRaft mode, no Zookeeper)
 - Database: PostgreSQL 16

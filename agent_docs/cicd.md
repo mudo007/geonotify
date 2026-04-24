@@ -7,6 +7,9 @@
 - No long-lived feature branches
 - Feature flags over feature branches for incomplete work
 
+## Local CI
+- Uses versioned .githooks/pre-commit to run linting locally before commits
+
 ## CI pipeline (GitHub Actions)
 
 Triggers: every push to any branch, every PR to main.

@@ -21,6 +21,11 @@ deployments/             — Docker, Kubernetes, Pulumi IaC.
 No import of `internal/adapters/*` from `internal/domain/*` — ever.
 Violated imports will fail `make lint`.
 
+## Local fast feedback
+- All development happens inside a docker container, so you don't need to install go on your machine.
+- It also has "air" configured so that any changes saved locally will cause it to hot reload.
+- Pre-commit hook saves CI time from failing on linting issues
+
 ## Key patterns in use
 
 - Repository pattern: interfaces in domain, implementations in adapters
