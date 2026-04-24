@@ -14,7 +14,9 @@ func main() {
 	}
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, `{"status":"ok"}`)
+		if _, err := fmt.Fprintln(w, `{"status":"ok"}`); err != nil {
+			log.Printf("error writing healthcheck response: %v", err)
+		}
 	})
 
 	log.Printf("geonotify api starting on :%s", port)
