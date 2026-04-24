@@ -1,0 +1,47 @@
+# Binary executables
+# ------------------
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Compiled object files
+# ---------------------
+*.a
+*.o
+
+# Main binary (replace 'app' with your project name if you prefer)
+# If you build using 'go build -o myapp', add 'myapp' here
+bin/
+out/
+app
+
+# Air live-reload build directory
+tmp/
+
+# Test and coverage reports
+# -------------------------
+*.test
+*.out
+coverage.txt
+
+# Dependency directory
+# --------------------
+# Only ignore 'vendor/' if you are NOT using the vendor command. 
+# Most modern Go projects do NOT need to check in vendor/.
+# vendor/
+
+# Local Environment / IDEs
+# ------------------------
+.env
+.env.local
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+# -----------
+.DS_Store
+Thumbs.db
