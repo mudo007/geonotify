@@ -12,7 +12,7 @@ linters:
 
 linters-settings:
   goimports:
-    local-prefixes: github.com/YOUR_USER/geonotify
+    local-prefixes: github.com/mudo007/geonotify
 
 issues:
   exclude-rules:
