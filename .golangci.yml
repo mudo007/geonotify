@@ -1,25 +1,24 @@
-version: 2
+version: "2"
 
+linters:
+  enable:
+    - errcheck       # no unchecked errors, ever
+    - gocritic
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+  exclusions:
+    rules:
+      # test files get a pass on errcheck
+      - path: '_test\.go'
+        linters:
+          - errcheck
 formatters:
   enable:
     - gofmt
     - goimports
   settings:
     goimports:
-      local-prefixes: github.com/mudo007/geonotify
-
-linters:
-  enable:
-    - govet
-    - errcheck       # no unchecked errors, ever
-    - staticcheck
-    - unused
-    - ineffassign
-    - gocritic
-
-issues:
-  exclude-rules:
-    # test files get a pass on errcheck
-    - path: '_test\.go'
-      linters:
-        - errcheck
+      local-prefixes: 
+      - github.com/mudo007/geonotify
