@@ -1,8 +1,13 @@
-Version: 2
+version: 2
+
 formatters:
   enable:
     - gofmt
     - goimports
+  settings:
+    goimports:
+      local-prefixes: github.com/mudo007/geonotify
+
 linters:
   enable:
     - govet
@@ -11,13 +16,10 @@ linters:
     - unused
     - ineffassign
     - gocritic
-  exclusions:
-    rules:
-      - path: '_test\.go'
-        linters:
-          - errcheck
 
-linters-settings:
-  goimports:
-    local-prefixes: github.com/mudo007/geonotify
+issues:
+  exclude-rules:
     # test files get a pass on errcheck
+    - path: '_test\.go'
+      linters:
+        - errcheck
