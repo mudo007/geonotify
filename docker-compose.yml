@@ -1,0 +1,87 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app                          # live-mount source for hot reload
+      - go-cache:/root/.cache/go        # persist module cache across restarts
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://geonotify:geonotify@postgres:5432/geonotify?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - APP_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - geonotify
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: geonotify
+      POSTGRES_PASSWORD: geonotify
+      POSTGRES_DB: geonotify
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geonotify"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - geonotify
+
+  kafka:
+    image: apache/kafka:3.9.0            # KRaft mode — no Zookeeper
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - geonotify
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest  # visual debugger — dev only
+    ports:
+      - "8081:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - geonotify
+
+volumes:
+  postgres-data:
+  kafka-data:
+  go-cache:
+
+networks:
+  geonotify:
+    driver: bridge
